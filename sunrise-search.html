@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sunrise Education – 搜索</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --sunrise-gold: #F4A825;
+      --sunrise-amber: #E8841A;
+      --sunrise-deep: #C4581A;
+      --dawn-blush: #FDF3E7;
+      --sky-light: #FFF8EE;
+      --charcoal: #2C2416;
+      --warm-grey: #8A7A68;
+      --soft-border: rgba(244,168,37,0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--sky-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Radiant background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(244,168,37,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(232,132,26,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 10% 80%, rgba(196,88,26,0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Decorative sun rays ── */
+    .sun-rays {
+      position: fixed;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 700px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.06;
+    }
+    .sun-rays::before,
+    .sun-rays::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: conic-gradient(
+        from 0deg,
+        var(--sunrise-gold) 0deg, transparent 12deg,
+        var(--sunrise-gold) 24deg, transparent 36deg,
+        var(--sunrise-gold) 48deg, transparent 60deg,
+        var(--sunrise-gold) 72deg, transparent 84deg,
+        var(--sunrise-gold) 96deg, transparent 108deg,
+        var(--sunrise-gold) 120deg, transparent 132deg,
+        var(--sunrise-gold) 144deg, transparent 156deg,
+        var(--sunrise-gold) 168deg, transparent 180deg,
+        var(--sunrise-gold) 192deg, transparent 204deg,
+        var(--sunrise-gold) 216deg, transparent 228deg,
+        var(--sunrise-gold) 240deg, transparent 252deg,
+        var(--sunrise-gold) 264deg, transparent 276deg,
+        var(--sunrise-gold) 288deg, transparent 300deg,
+        var(--sunrise-gold) 312deg, transparent 324deg,
+        var(--sunrise-gold) 336deg, transparent 360deg
+      );
+      border-radius: 50%;
+    }
+    .sun-rays::after {
+      transform: rotate(6deg);
+      opacity: 0.5;
+    }
+
+    /* ── Main layout ── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Header bar ── */
+    header {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0 0;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .logo-img {
+      height: 52px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(244,168,37,0.35));
+      transition: transform 0.4s ease;
+    }
+    .logo-wrap:hover .logo-img { transform: scale(1.06) rotate(-2deg); }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      letter-spacing: 0.01em;
+      line-height: 1.1;
+    }
+    .logo-tagline {
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: var(--warm-grey);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .header-rule {
+      height: 1px;
+      flex: 1;
+      margin: 0 32px;
+      background: linear-gradient(90deg, transparent, var(--soft-border), transparent);
+    }
+
+    .header-date {
+      font-size: 0.72rem;
+      color: var(--warm-grey);
+      letter-spacing: 0.06em;
+      text-align: right;
+    }
+
+    /* ── Hero section ── */
+    .hero {
+      margin-top: 60px;
+      text-align: center;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--sunrise-amber);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 300;
+      color: var(--charcoal);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--sunrise-gold), var(--sunrise-deep));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: var(--warm-grey);
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Divider ornament ── */
+    .ornament {
+      margin: 36px auto 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 200px;
+    }
+    .ornament-line { flex: 1; height: 1px; background: var(--soft-border); }
+    .ornament-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--sunrise-gold);
+      box-shadow: 0 0 8px rgba(244,168,37,0.5);
+    }
+
+    /* ── Search container ── */
+    .search-container {
+      width: 100%;
+      max-width: 720px;
+      margin-top: 44px;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    /* ── Google CSE Override Styles ── */
+    .gsc-search-box,
+    .gsc-search-box-tools {
+      border: none !important;
+      padding: 0 !important;
+    }
+
+    /* Wrapper to style the CSE input */
+    .gcse-wrap {
+      background: #fff;
+      border: 1.5px solid var(--soft-border);
+      border-radius: 60px;
+      box-shadow:
+        0 4px 24px rgba(244,168,37,0.10),
+        0 1px 4px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      padding: 6px 6px 6px 28px;
+    }
+    .gcse-wrap:focus-within {
+      border-color: var(--sunrise-gold);
+      box-shadow:
+        0 4px 32px rgba(244,168,37,0.20),
+        0 0 0 4px rgba(244,168,37,0.08);
+    }
+
+    /* Remove CSE's default table wrapper */
+    .gsc-search-box table,
+    .gsc-search-box tbody,
+    .gsc-search-box tr,
+    .gsc-search-box td {
+      display: block !important;
+      border: none !important;
+      background: transparent !important;
+    }
+    .gsc-search-box td { padding: 0 !important; }
+
+    /* Style the input */
+    .gsc-input-box {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+    input.gsc-input {
+      font-family: 'DM Sans', sans-serif !important;
+      font-size: 1.02rem !important;
+      color: var(--charcoal) !important;
+      background: transparent !important;
+      border: none !important;
+      outline: none !important;
+      padding: 12px 0 !important;
+      width: 100% !important;
+    }
+    input.gsc-input::placeholder { color: var(--warm-grey) !important; }
+
+    /* Style the search button */
+    .gsc-search-button {
+      padding: 0 !important;
+    }
+    .gsc-search-button button,
+    .gsc-search-button-v2 {
+      background: linear-gradient(135deg, var(--sunrise-gold), var(--sunrise-amber)) !important;
+      border: none !important;
+      border-radius: 50px !important;
+      padding: 10px 26px !important;
+      cursor: pointer !important;
+      transition: opacity 0.2s, transform 0.2s !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      box-shadow: 0 2px 12px rgba(244,168,37,0.35) !important;
+    }
+    .gsc-search-button button:hover,
+    .gsc-search-button-v2:hover {
+      opacity: 0.9 !important;
+      transform: scale(1.03) !important;
+    }
+    .gsc-search-button svg { fill: #fff !important; }
+
+    /* Results area */
+    .gsc-results-wrapper-overlay,
+    .gsc-results-wrapper-nooverlay {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    .gsc-result {
+      background: #fff !important;
+      border: 1.5px solid var(--soft-border) !important;
+      border-radius: 16px !important;
+      padding: 20px 24px !important;
+      margin: 12px 0 !important;
+      transition: box-shadow 0.2s, transform 0.2s !important;
+    }
+    .gsc-result:hover {
+      box-shadow: 0 4px 24px rgba(244,168,37,0.12) !important;
+      transform: translateY(-2px) !important;
+    }
+
+    .gs-title, .gs-title b {
+      font-family: 'Cormorant Garamond', serif !important;
+      font-size: 1.2rem !important;
+      font-weight: 600 !important;
+      color: var(--charcoal) !important;
+    }
+    .gs-title a:hover { color: var(--sunrise-amber) !important; text-decoration: none !important; }
+
+    .gs-snippet {
+      font-size: 0.9rem !important;
+      color: var(--warm-grey) !important;
+      line-height: 1.65 !important;
+    }
+
+    .gs-visibleUrl {
+      color: var(--sunrise-amber) !important;
+      font-size: 0.78rem !important;
+    }
+
+    .gsc-cursor-box { text-align: center !important; margin: 20px 0 !important; }
+    .gsc-cursor-page {
+      background: transparent !important;
+      border: 1.5px solid var(--soft-border) !important;
+      border-radius: 8px !important;
+      color: var(--charcoal) !important;
+      padding: 6px 12px !important;
+      margin: 0 3px !important;
+      font-family: 'DM Sans', sans-serif !important;
+    }
+    .gsc-cursor-current-page {
+      background: var(--sunrise-gold) !important;
+      color: #fff !important;
+      border-color: var(--sunrise-gold) !important;
+    }
+
+    /* ── Suggestion chips ── */
+    .suggestions {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.45s ease both;
+    }
+    .chip {
+      padding: 7px 18px;
+      border-radius: 40px;
+      border: 1px solid var(--soft-border);
+      background: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      color: var(--warm-grey);
+      cursor: pointer;
+      transition: all 0.22s ease;
+      backdrop-filter: blur(4px);
+    }
+    .chip:hover {
+      border-color: var(--sunrise-gold);
+      color: var(--sunrise-amber);
+      background: rgba(244,168,37,0.06);
+      transform: translateY(-1px);
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: auto;
+      padding-top: 60px;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--warm-grey);
+      letter-spacing: 0.06em;
+      animation: fadeUp 0.8s 0.6s ease both;
+    }
+    footer a { color: var(--sunrise-amber); text-decoration: none; }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header-rule, .header-date { display: none; }
+      .hero-title { font-size: 2rem; }
+      .gcse-wrap { padding: 4px 4px 4px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sun-rays"></div>
+
+<div class="page-wrap">
+
+  <!-- Header -->
+  <header>
+    <a class="logo-wrap" href="#">
+      <img class="logo-img"
+           src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjmXRPI8t9UWrL4sP5aa9SHKFfVVBnNM1TKxWKUK6FjTeHEIPxx4JWlrr3kJGiVz_LOh7aB_XphTN4tXz2BoLpzPMHiyTJMn5h-7SHjrIX4D4tuR2MsPQ7VEPfMBDZZ8E4lZqIKcR6JyHtGvuXAfkl2Nlz8uckOwr7z9olSEHWtW6s/s1600/Sunrise%20icon%20RGB-01.png"
+           alt="Sunrise Education Logo"/>
+      <div class="logo-text">
+        <span class="logo-name">Sunrise Education</span>
+        <span class="logo-tagline">Illuminating Futures</span>
+      </div>
+    </a>
+    <div class="header-rule"></div>
+    <div class="header-date" id="hdr-date"></div>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="hero-eyebrow">Knowledge at your fingertips</p>
+    <h1 class="hero-title">Discover &amp; <em>Explore</em></h1>
+    <p class="hero-sub">Search our resources, courses, and educational content</p>
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-dot"></div>
+      <div class="ornament-line"></div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-container">
+    <div class="gcse-wrap">
+      <script async src="https://cse.google.com/cse.js?cx=c4363a3cf8d874542"></script>
+      <div class="gcse-search"></div>
+    </div>
+  </div>
+
+  <!-- Suggestion chips -->
+  <div class="suggestions">
+    <span class="chip" onclick="doSearch('Courses')">📚 Courses</span>
+    <span class="chip" onclick="doSearch('Tuition')">✏️ Tuition</span>
+    <span class="chip" onclick="doSearch('SPM')">🎓 SPM</span>
+    <span class="chip" onclick="doSearch('IGCSE')">🌏 IGCSE</span>
+    <span class="chip" onclick="doSearch('Online Learning')">💻 Online Learning</span>
+    <span class="chip" onclick="doSearch('Scholarship')">⭐ Scholarship</span>
+  </div>
+
+  <footer>
+    &copy; <span id="yr"></span> Sunrise Education &nbsp;·&nbsp;
+    <a href="#">Privacy</a> &nbsp;·&nbsp;
+    <a href="#">Contact</a>
+  </footer>
+
+</div>
+
+<script>
+  // Date in header
+  const now = new Date();
+  document.getElementById('hdr-date').textContent =
+    now.toLocaleDateString('en-MY', { weekday:'short', year:'numeric', month:'short', day:'numeric' });
+  document.getElementById('yr').textContent = now.getFullYear();
+
+  // Chip click: inject query into CSE and trigger search
+  function doSearch(term) {
+    const tryFill = () => {
+      const inp = document.querySelector('input.gsc-input');
+      if (inp) {
+        inp.value = term;
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        const btn = document.querySelector('.gsc-search-button button, .gsc-search-button-v2');
+        if (btn) btn.click();
+      } else {
+        setTimeout(tryFill, 300);
+      }
+    };
+    tryFill();
+  }
+
+  // Move results outside gcse-wrap so they're full-width
+  const observer = new MutationObserver(() => {
+    const results = document.querySelector('.gsc-results-wrapper-nooverlay, .gsc-results-wrapper-overlay');
+    const container = document.querySelector('.search-container');
+    if (results && container && !container.contains(results)) {
+      container.appendChild(results);
+      results.style.marginTop = '20px';
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+</script>
+
+</body>
+</html>
